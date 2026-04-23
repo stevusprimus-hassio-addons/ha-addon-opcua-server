@@ -1,0 +1,14 @@
+---
+name: Release Drafter
+
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  workflows:
+    # yamllint disable-line rule:line-length
+    uses: stevusprimus-hassio-addons/workflows/.github/workflows/release-drafter.yaml@main

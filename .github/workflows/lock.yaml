@@ -1,0 +1,13 @@
+---
+name: Lock
+
+# yamllint disable-line rule:truthy
+on:
+  schedule:
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+
+jobs:
+  workflows:
+    # yamllint disable-line rule:line-length
+    uses: stevusprimus-hassio-addons/workflows/.github/workflows/lock.yaml@main

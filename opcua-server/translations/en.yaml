@@ -1,0 +1,22 @@
+configuration:
+  endpoint:
+    name: OPC UA endpoint
+    description: >-
+      OPC UA endpoint URL to bind to. Use 0.0.0.0 to listen on all interfaces.
+      Example: opc.tcp://0.0.0.0:4840/ha/
+  namespace_uri:
+    name: Namespace URI
+    description: >-
+      OPC UA namespace URI used for the Home Assistant nodes.
+      Example: urn:homeassistant:opcua
+  server_name:
+    name: Server name
+    description: Friendly name presented by the OPC UA server.
+  entities:
+    name: Entities
+    description: >-
+      List of Home Assistant entity IDs to expose as OPC UA variables.
+      Example: sensor.temperature
+network:
+  4840/tcp:
+    name: OPC UA endpoint
