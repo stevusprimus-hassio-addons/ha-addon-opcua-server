@@ -1,0 +1,34 @@
+name: OPC UA Server
+slug: opcua_server
+description: Expose selected Home Assistant entity states via an OPC UA server.
+version: "0.1.0"
+url: https://github.com/yourname/ha-addon-opcaua-server
+arch:
+  - aarch64
+  - amd64
+  - armv7
+  - i386
+startup: services
+boot: auto
+init: false
+hassio_api: true
+hassio_role: default
+homeassistant_api: true
+options:
+  endpoint: opc.tcp://0.0.0.0:4840/ha/
+  namespace_uri: urn:homeassistant:opcua
+  server_name: HomeAssistant OPC UA
+  entities:
+    - sensor.temperature
+schema:
+  endpoint: str
+  namespace_uri: str
+  server_name: str
+  entities:
+    - str
+ports:
+  4840/tcp: 4840
+ports_description:
+  4840/tcp: OPC UA endpoint
+map:
+  - config:rw
