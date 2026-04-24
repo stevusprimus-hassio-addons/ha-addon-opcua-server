@@ -29,6 +29,6 @@ schema:
 ports:
   4840/tcp: 4840
 ports_description:
-  4840/tcp: OPC UA endpoint
+  4840/tcp: OPC UA endpoint TCP
 map:
   - config:rw
