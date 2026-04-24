@@ -28,3 +28,4 @@ Example:
 
 - This initial version exposes only the entity `state` as a scalar value.
 - OPC UA TLS/security policies are not enabled yet.
+- chang
