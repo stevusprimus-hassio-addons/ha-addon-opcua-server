@@ -1,7 +1,7 @@
 name: OPC UA Server
 slug: opcua_server
 description: Expose selected Home Assistant entity states via an OPC UA server.
-version: "0.1.0"
+version: "0.1.1"
 image: "ghcr.io/stevusprimus-hassio-addons/ha-addon-opcua-server"
 url: https://github.com/stevusprimus-hassio-addons/ha-addon-opcua-server
 arch:
