@@ -6,8 +6,8 @@ url: https://github.com/stevusprimus-hassio-addons/ha-addon-opcua-server
 arch:
   - aarch64
   - amd64
-  - armv7
-  - i386
+#  - armv7
+#  - i386
 startup: services
 boot: auto
 init: false
