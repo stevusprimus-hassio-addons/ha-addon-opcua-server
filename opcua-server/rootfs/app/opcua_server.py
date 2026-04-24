@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 import os
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Set, Tuple
@@ -16,6 +17,7 @@ class AddonConfig:
     namespace_uri: str
     server_name: str
     entities: List[str]
+    log_level: str = "info"
 
 
 def _read_options() -> Dict[str, Any]:
@@ -31,6 +33,7 @@ def load_config() -> AddonConfig:
         namespace_uri=opts.get("namespace_uri", "urn:homeassistant:opcua"),
         server_name=opts.get("server_name", "HomeAssistant OPC UA"),
         entities=list(opts.get("entities", [])),
+        log_level=str(opts.get("log_level", "info")),
     )
 
 
@@ -178,18 +181,46 @@ def sanitize_browse_name(entity_id: str) -> str:
     return entity_id.replace(".", "_").replace(" ", "_")
 
 
+_LOG_LEVELS: Dict[str, int] = {
+    "trace": logging.DEBUG,  # Python stdlib has no TRACE; map to DEBUG
+    "debug": logging.DEBUG,
+    "info": logging.INFO,
+    "warning": logging.WARNING,
+    "error": logging.ERROR,
+    "critical": logging.CRITICAL,
+}
+
+
+def _setup_logging(level: str) -> None:
+    lvl = _LOG_LEVELS.get((level or "").strip().lower(), logging.INFO)
+    logging.basicConfig(
+        level=lvl,
+        format="%(asctime)s [%(levelname)s] [opcua-server] %(message)s",
+    )
+
+
 async def main() -> None:
     cfg = load_config()
+    _setup_logging(cfg.log_level)
+    log = logging.getLogger("opcua-server")
+
+    log.info("Starting OPC UA Server")
+    log.info("Endpoint: %s", cfg.endpoint)
+    log.info("Namespace URI: %s", cfg.namespace_uri)
+    log.info("Server name: %s", cfg.server_name)
+    log.info("Configured entities/patterns: %s", ", ".join(cfg.entities) if cfg.entities else "<none>")
 
     # Normalize configured entity IDs / wildcard patterns
     patterns, warnings = _normalize_entities(cfg.entities)
     for w in warnings:
-        print(f"[opcua-server] WARNING: {w}")
+        log.warning(w)
 
     server = Server()
     await server.init()
     server.set_endpoint(cfg.endpoint)
     server.set_server_name(cfg.server_name)
+
+    log.info("OPC UA server initialized")
 
     idx = await server.register_namespace(cfg.namespace_uri)
 
@@ -236,16 +267,16 @@ async def main() -> None:
                     cfg.entities.append(ent)
 
                 if unmatched_patterns:
-                    print(
-                        "[opcua-server] WARNING: The following wildcard patterns matched no entities: "
-                        + ", ".join(unmatched_patterns)
+                    log.warning(
+                        "The following wildcard patterns matched no entities: %s",
+                        ", ".join(unmatched_patterns),
                     )
 
                 missing = [e for e in cfg.entities if e not in states]
                 if missing:
-                    print(
-                        "[opcua-server] WARNING: The following configured entities were not found in Home Assistant: "
-                        + ", ".join(missing)
+                    log.warning(
+                        "The following configured entities were not found in Home Assistant: %s",
+                        ", ".join(missing),
                     )
 
                 # Create OPC UA variables for resolved entities
@@ -260,12 +291,15 @@ async def main() -> None:
                     st = states.get(ent)
                     if st is not None:
                         await node.write_value(coerce_variant((st.get("state") if isinstance(st, dict) else None)))
-            except Exception as e:
-                print(f"[opcua-server] WARNING: Could not expand/validate entities via Home Assistant websocket: {e}")
+            except Exception:
+                log.exception("Could not expand/validate entities via Home Assistant websocket")
+
+            ws_url = supervisor_ws_url()
+            log.info("Connecting to Home Assistant websocket: %s", ws_url)
 
             await ha_ws_listen(
                 session=session,
-                ws_url=supervisor_ws_url(),
+                ws_url=ws_url,
                 token=supervisor_token(),
                 entities=cfg.entities,
                 on_state=on_state,

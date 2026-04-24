@@ -16,6 +16,8 @@ ENV PATH="/opt/venv/bin:${PATH}"
 WORKDIR /app
 COPY rootfs/ /
 
-RUN chmod +x /etc/services.d/opcua-server/run
+# Fallback: if the add-on is (mis)configured to run with s6 services, ensure the run script is executable.
+RUN chmod +x /etc/services.d/opcua-server/run || true
 
-CMD [ "/init" ]
+# Run as a simple application (no s6-overlay services.d)
+CMD [ "python", "-u", "/app/opcua_server.py" ]
