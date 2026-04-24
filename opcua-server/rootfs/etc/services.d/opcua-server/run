@@ -3,4 +3,4 @@ set -euo pipefail
 
 bashio::log.info "Starting OPC UA Server add-on"
 
-python3 -u /app/opcua_server.py
+python -u /app/opcua_server.py
