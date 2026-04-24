@@ -21,6 +21,7 @@ entities:
 - `Objects/HomeAssistant/<entity_id with '.' replaced by '_'>`
 
 Example:
+
 - `sensor.temperature` → `Objects/HomeAssistant/sensor_temperature`
 
 ## Notes

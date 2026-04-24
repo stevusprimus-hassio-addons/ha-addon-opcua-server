@@ -1,6 +1,6 @@
 # Home Assistant Add-on Repository: OPC UA Server
 
-This repository contains a Home Assistant **Add-on** that runs an **OPC UA server** and exposes selected Home Assistant entity states as OPC UA variables.
+This repository contains a Home Assistant **App** that runs an **OPC UA server** and exposes selected Home Assistant entity states as OPC UA variables.
 
 ## Add-ons
 
