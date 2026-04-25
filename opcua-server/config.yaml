@@ -10,10 +10,8 @@ arch:
 #  - armv7
 #  - i386
 startup: application
-boot: auto
 init: false
 hassio_api: true
-hassio_role: default
 homeassistant_api: true
 options:
   endpoint: opc.tcp://0.0.0.0:4840/ha/
@@ -21,7 +19,7 @@ options:
   server_name: HomeAssistant OPC UA
   log_level: info
   entities:
-    - sensor.temperature
+    - sensor.*temperature*
 schema:
   endpoint: str
   namespace_uri: str
@@ -34,4 +32,4 @@ ports:
 ports_description:
   4840/tcp: OPC UA endpoint TCP
 map:
-  - config:rw
+  - addon_config:rw
